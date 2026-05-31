@@ -633,6 +633,38 @@ async def get_next_messages(
         ]
         # filter out the Nones
         return [m for m in n_messages if m]
+        
+    elif model in [Model.gpt_oss_20b]:
+        local_client = AsyncOpenAI(
+            api_key="local",
+            base_url="http://localhost:8000/v1",
+            timeout=1200,
+            max_retries=3,
+        )
+        messages = text_only_messages(messages)  # vLLM doesn't handle image_url format
+        n_messages = [
+            await get_next_message_openai(
+                openai_client=local_client,
+                messages=messages,
+                model=model,
+                temperature=temperature,
+                name="gpt-oss-20b",
+            ),
+            *await asyncio.gather(
+                *[
+                    get_next_message_openai(
+                        openai_client=local_client,
+                        messages=messages,
+                        model=model,
+                        temperature=temperature,
+                        name="gpt-oss-20b",
+                    )
+                    for _ in range(n_times - 1)
+                ]
+            ),
+        ]
+        return [m for m in n_messages if m]
+        
     else:
         raise ValueError(f"Invalid model: {model}")
 
