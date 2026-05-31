@@ -11,11 +11,12 @@ from src.models import (
     RootPromptConfig,
 )
 
-model = Model.claude_3_5_sonnet
+# model = Model.claude_3_5_sonnet
 # model = Model.gpt_4o
 # model = Model.claude_3_5_sonnet
 # model = Model.gpt_4o_mini
 # model = Model.gemini_1_5_pro
+model = Model.gpt_oss_20b
 
 small_deep: list[RootAttemptConfig] = [
     RootAttemptConfig(
